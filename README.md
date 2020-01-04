@@ -1,40 +1,32 @@
 # [JDLT](https://jdlt.co.uk) full-stack developer challenge
 
-We're hoping to see how you approach a challenge and what sort of standards you use in your code so please feel free to be as creative as you like.
-
-The [job spec](https://jdlt.co.uk/join/full-stack-developer) will help you understand what we'd like to see.
-
-## Dependencies
-* NPM / Yarn
 ## Instructions
-From the project root folder:
-```
-$ npm install
-```
-OR
-```
-$ yarn
-```w
-Then it's over to you!
+Node is pointing to the following mongo database:
+``` mongodb://localhost/jdlt ```
+
+Be sure to either set up the corresponding database on your local machine, or update the dbURI value under `config/environment.js` to your own choosing
+
+- Install dependencies via `$ npm install`
+- Seed the mongo database via `$ npm run seeds`
+
+- Backend server is setup to run on port 8000
+- Frontend server is setup to run on port 4000
+
+You can change these values under `config/environment.js` and `webpack.config.js`
+
+Basic scripts:
+- `$ npm run back` : run back-end server
+- `$ npm run front` : run front-end server
+
 
 **Please demonstrate:**
-* Selecting suppliers and products in the drop-downs
-* A round-trip to a server pulling back prices
-* Displaying the returned data in the grid
-* Anything else you'd like to show us
+- [x] Selecting suppliers and products in the drop-downs
+- [x] A round-trip to a server pulling back prices
+- [x] Displaying the returned data in the grid
+- [x] Anything else you'd like to show us
 
-### Sample data
+## Demo Example
 
-| Supplier    | Product      | Price (£) |
-| ------------|--------------|-----------|
-| New Co Ltd  | Small wongle | 5         |
-| New Co Ltd  | Large wongle | 8         |
-| New Co Ltd  | Super wongle | 12        |
-| Old Co Ltd  | Mini wongle  | 4         |
-| Old Co Ltd  | Small wongle | 6         |
-| Old Co Ltd  | Large wongle | 9         |
-| Old Co Ltd  | Super wongle | 13        |
+![demo](demo.png)
 
-
-
-// webpack, npm, mongo - jdlt is db
+I've delivered everything in the breif, also adding a small feature to ascend/descend the search reults by price if you click on the Price column header.
