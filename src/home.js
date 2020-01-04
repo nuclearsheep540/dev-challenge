@@ -5,23 +5,131 @@ export default class Home extends React.Component {
   constructor() {
     super()
     this.state = {
-      data: {
-
-      }
-
+      data: [], //all items
+      select: [], //items returned by result of two filters
+      selSupplier: [], //suppliers result by filter
+      selProduct: [] //products result by filter
     }
-    //binds
+    this.handleSupplier = this.handleSupplier.bind(this)
+    this.handleProduct = this.handleProduct.bind(this)
   }
-  componentDidMount(){
+  componentDidMount() {
     axios.get('/api/products')
       .then(res => {
-        this.setState({ data: res.data })
-        console.log(this.state.data)
+        this.setState({
+          data: res.data,
+          select: res.data,
+          selSupplier: [...new Set(res.data.map(elem => elem.supplier))],
+          selProduct: [...new Set(res.data.map(elem => elem.product))]
+        })
       })
   }
 
+  handleSupplier() {
+
+    // if supplier && product === all ... show all
+    if (event.target.value === 'All' && this.state.selProduct.length > 1) {
+      console.log('supplier rule 1')
+      this.setState({
+        ...this.state,
+        selSupplier: [...new Set(this.state.data.map(elem => elem.supplier))],
+        select: this.state.data
+      })
+
+      // if supplier === all ... show this suppliers by with this product
+    } else if (event.target.value === 'All') {
+      console.log('supplier rule 2')
+      this.setState({
+        ...this.state,
+        selSupplier: [...new Set(this.state.data.map(elem => elem.supplier))], //list of all unique suppliers
+        select: this.state.data.filter(item => item.supplier.includes(this.state.selSupplier)) //list of all suppliers who supply this product
+      })
+
+      // if supplier !== all && product === all ... show all products by seleted supplier
+    } else if (this.state.selProduct.length > 1) {
+      console.log('supplier rule 3')
+      this.setState({
+        ...this.state,
+        selSupplier: [event.target.value],
+        select: this.state.data.filter(item => item.supplier === event.target.value)
+      })
+
+      // show products by sel supplier
+    } else {
+      console.log('supplier rule 4')
+      this.setState({
+        ...this.state,
+        selSupplier: [event.target.value],
+        select: this.state.data.filter(item => item.supplier === event.target.value && item.product.includes(this.state.selProduct))
+      })
+    }
+  }
+  
+  // handleProduct() {
+  //   this.setState({
+  //     ...this.state,
+  //     selProduct: event.target.value === 'All' ? [...new Set(this.state.data.map(elem => elem.product))]
+  //       : [event.target.value],
+  //     select: event.target.value === 'All' ? this.state.data.filter(item => item.supplier.includes(this.state.selSupplier))
+  //       : this.state.data.filter(item => item.product === event.target.value && item.supplier === this.state.selSupplier)
+  //   })
+  // }
+
+  handleProduct(){
+
+    // if product && supplier === all ... show all
+    if (event.target.value === 'All' && this.state.selSupplier.length > 1) {
+      console.log('product rule 1')
+      this.setState({
+        ...this.state,
+        selProduct: [...new Set(this.state.data.map(elem => elem.supplier))],
+        select: this.state.data
+      })
+
+      // if product === all ... show all products for this supplier
+    } else if (event.target.value === 'All') {
+      console.log('product rule 2')
+      this.setState({
+        ...this.state,
+        selProduct: [...new Set(this.state.data.map(elem => elem.product))], //list of all unique suppliers,
+        select: this.state.data.filter(item => item.supplier.includes(this.state.selSupplier)) 
+      })
+
+      // if product !== all && supplier === all ... show all suppliers with seleted product
+    } else if (this.state.selSupplier.length > 1) {
+      console.log('product rule 3')
+      this.setState({
+        ...this.state,
+        selProduct: [event.target.value],
+        select: this.state.data.filter(item => item.product === event.target.value)
+      })
+
+      // show suppliers by sel product
+    } else {
+      console.log('product rule 4')
+      this.setState({
+        ...this.state,
+        selProduct: [event.target.value],
+        select: this.state.data.filter(item => item.product === event.target.value && item.supplier.includes(this.state.selSupplier)) 
+      })
+    }
+  }
+
   render() {
+    console.log('sup :', this.state.selSupplier)
+    console.log('prod :', this.state.selProduct)
+    console.log('sel :', this.state.select)
+    console.log('')
     if (!this.state.data) return null
+
+    const { data, select } = this.state
+
+    const supplier = data.map(elem => elem.supplier) //get all suppliers from data
+    const uniqueSupplier = [...new Set(supplier)] //store unique suppliers
+
+    const product = data.map(elem => elem.product) //get all products from data
+    const uniqueProduct = [...new Set(product)] //store unique products
+
     return (
       <div className="container-fluid">
         <div className="row">
@@ -32,15 +140,21 @@ export default class Home extends React.Component {
               <div className="row">
                 <div className="form-group col-md-6">
                   <label>Supplier</label>
-                  <select className="form-control" id="selSupplier">
-                    <option>xxxx</option>
+
+                  <select className="form-control" id="selSupplier" onChange={this.handleSupplier}>
+                    <option value='All'>All</option>
+                    {uniqueSupplier.map((elem, i) => <option key={i} value={elem}>{elem}</option>)}
                   </select>
                 </div>
+
                 <div className="form-group col-md-6">
                   <label>Product</label>
-                  <select className="form-control" id="selProduct">
-                    <option>xxxx</option>
+
+                  <select className="form-control" id="selProduct" onChange={this.handleProduct}>
+                    <option value='All'>All</option>
+                    {uniqueProduct.map((elem, i) => <option key={i} value={elem}>{elem}</option>)}
                   </select>
+
                 </div>
               </div>
             </form>
@@ -56,13 +170,16 @@ export default class Home extends React.Component {
                     <th>Price</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr>
-                    <td>x</td>
-                    <td>xxxx</td>
-                    <td>xxxx</td>
-                    <td>xxxx</td>
-                  </tr>
+                <tbody onLoad={this.handleUpdate}>
+                  {select.map((item, i) => (
+                    <tr key={i + 1}>
+                      <td>{i + 1}</td>
+                      <td>{item.supplier}</td>
+                      <td>{item.product}</td>
+                      <td>{item.price}</td>
+                    </tr>
+                  )
+                  )}
                 </tbody>
               </table>
             </div>

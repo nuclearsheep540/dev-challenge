@@ -6,15 +6,45 @@ mongoose.connect(
   dbURI, 
   { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true },
   (err, db) => {
-    if (err) return console.log(err) // if connect fails, will send an error to the console and exit
-    db.dropDatabase() // on a good connect, first drop all data in the database]
-      .then(users => { // now the argument of this then block is the array of created users, and we can attach these to animals on a 'user' field. the field is called user as that is what its defined as in the model (/models/Animal). Another common term to use might of been owner.
+    if (err) return console.log(err)
+    db.dropDatabase() 
+      .then(users => { 
         console.log(`${'👱'.repeat(users.length)} users created`)
-        return Product.create([ // creating an array of new animals
+        return Product.create([
           {
             product: 'Small Wongle', 
             supplier: 'New Co Ltd' , 
             price: 5
+          },
+          {
+            product: 'Large Wongle', 
+            supplier: 'New Co Ltd' , 
+            price: 8
+          },
+          {
+            product: 'Super Wongle', 
+            supplier: 'New Co Ltd' , 
+            price: 12
+          },
+          {
+            product: 'Mini Wongle', 
+            supplier: 'Old Co Ltd' , 
+            price: 4
+          },
+          {
+            product: 'Small Wongle', 
+            supplier: 'Old Co Ltd' , 
+            price: 6
+          },
+          {
+            product: 'Large Wongle', 
+            supplier: 'Old Co Ltd' , 
+            price: 9
+          },
+          {
+            product: 'Super Wongle', 
+            supplier: 'Old Co Ltd' , 
+            price: 13
           }
         ]
         )
