@@ -8,10 +8,13 @@ export default class Home extends React.Component {
       data: [], //all items
       select: [], //items returned by result of two filters
       selSupplier: [], //suppliers result by filter
-      selProduct: [] //products result by filter
+      selProduct: [], //products result by filter
+      priceOrder: true
     }
     this.handleSupplier = this.handleSupplier.bind(this)
     this.handleProduct = this.handleProduct.bind(this)
+    this.ascPrice = this.ascPrice.bind(this)
+    this.desPrice = this.desPrice.bind(this)
   }
   componentDidMount() {
     axios.get('/api/products')
@@ -26,7 +29,6 @@ export default class Home extends React.Component {
   }
 
   handleSupplier() {
-
     // if supplier && product === all ... show all
     if (event.target.value === 'All' && this.state.selProduct.length > 1) {
       console.log('supplier rule 1')
@@ -64,19 +66,8 @@ export default class Home extends React.Component {
       })
     }
   }
-  
-  // handleProduct() {
-  //   this.setState({
-  //     ...this.state,
-  //     selProduct: event.target.value === 'All' ? [...new Set(this.state.data.map(elem => elem.product))]
-  //       : [event.target.value],
-  //     select: event.target.value === 'All' ? this.state.data.filter(item => item.supplier.includes(this.state.selSupplier))
-  //       : this.state.data.filter(item => item.product === event.target.value && item.supplier === this.state.selSupplier)
-  //   })
-  // }
 
-  handleProduct(){
-
+  handleProduct() {
     // if product && supplier === all ... show all
     if (event.target.value === 'All' && this.state.selSupplier.length > 1) {
       console.log('product rule 1')
@@ -92,7 +83,7 @@ export default class Home extends React.Component {
       this.setState({
         ...this.state,
         selProduct: [...new Set(this.state.data.map(elem => elem.product))], //list of all unique suppliers,
-        select: this.state.data.filter(item => item.supplier.includes(this.state.selSupplier)) 
+        select: this.state.data.filter(item => item.supplier.includes(this.state.selSupplier))
       })
 
       // if product !== all && supplier === all ... show all suppliers with seleted product
@@ -110,24 +101,41 @@ export default class Home extends React.Component {
       this.setState({
         ...this.state,
         selProduct: [event.target.value],
-        select: this.state.data.filter(item => item.product === event.target.value && item.supplier.includes(this.state.selSupplier)) 
+        select: this.state.data.filter(item => item.product === event.target.value && item.supplier.includes(this.state.selSupplier))
       })
     }
   }
+  ascPrice() {
+    this.setState({
+      ...this.state,
+      select: this.state.select.sort((a, b) => a.price - b.price),
+      priceOrder: !this.state.priceOrder
+    })
+    console.log('ascending price')
+  }
+
+  desPrice() {
+    this.setState({
+      ...this.state,
+      select: this.state.select.sort((a, b) => b.price - a.price),
+      priceOrder: !this.state.priceOrder
+    })
+    console.log('descending price')
+  }
 
   render() {
-    console.log('sup :', this.state.selSupplier)
-    console.log('prod :', this.state.selProduct)
-    console.log('sel :', this.state.select)
+    console.log('suppli :', this.state.selSupplier)
+    console.log('produc :', this.state.selProduct)
+    console.log('select :', this.state.select)
     console.log('')
     if (!this.state.data) return null
 
     const { data, select } = this.state
 
-    const supplier = data.map(elem => elem.supplier) //get all suppliers from data
+    const supplier = data.map(elem => elem.supplier) //store all suppliers from data
     const uniqueSupplier = [...new Set(supplier)] //store unique suppliers
 
-    const product = data.map(elem => elem.product) //get all products from data
+    const product = data.map(elem => elem.product) //store all products from data
     const uniqueProduct = [...new Set(product)] //store unique products
 
     return (
@@ -167,7 +175,7 @@ export default class Home extends React.Component {
                     <th>#</th>
                     <th>Supplier</th>
                     <th>Product</th>
-                    <th>Price</th>
+                    <th onClick={this.state.priceOrder ? this.desPrice : this.ascPrice} className='trhover'>Price</th>
                   </tr>
                 </thead>
                 <tbody onLoad={this.handleUpdate}>
@@ -176,7 +184,7 @@ export default class Home extends React.Component {
                       <td>{i + 1}</td>
                       <td>{item.supplier}</td>
                       <td>{item.product}</td>
-                      <td>{item.price}</td>
+                      <td>£{item.price}</td>
                     </tr>
                   )
                   )}
