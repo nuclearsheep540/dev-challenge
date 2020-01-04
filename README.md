@@ -1,7 +1,7 @@
 # [JDLT](https://jdlt.co.uk) full-stack developer challenge
 
 ## Instructions
-Node is pointing to the following mongo database:
+Backend is pointing to the following URL for the mongo database:
 ``` mongodb://localhost/jdlt ```
 
 Be sure to either set up the corresponding database on your local machine, or update the dbURI value under `config/environment.js` to your own choosing
