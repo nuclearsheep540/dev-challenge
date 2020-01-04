@@ -8,8 +8,7 @@ export default class Home extends React.Component {
       data: [], //all items
       select: [], //items returned by result of two filters
       selSupplier: [], //suppliers result by filter
-      selProduct: [], //products result by filter
-      priceOrder: true
+      selProduct: [] //products result by filter
     }
     this.handleSupplier = this.handleSupplier.bind(this)
     this.handleProduct = this.handleProduct.bind(this)
@@ -120,7 +119,6 @@ export default class Home extends React.Component {
       select: this.state.select.sort((a, b) => b.price - a.price),
       priceOrder: !this.state.priceOrder
     })
-    console.log('descending price')
   }
 
   render() {
@@ -173,7 +171,7 @@ export default class Home extends React.Component {
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th>Supplier</th>
+                    <th >Supplier</th>
                     <th>Product</th>
                     <th onClick={this.state.priceOrder ? this.desPrice : this.ascPrice} className='trhover'>Price</th>
                   </tr>
